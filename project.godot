@@ -18,6 +18,10 @@ config/icon="res://icon.svg"
 
 RpgActor="*uid://wtt4fkovk3wo"
 
+[dotnet]
+
+project/assembly_name="RPGActor Plugin"
+
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/DeeplinkPlugin/plugin.cfg", "res://addons/OAuth2Plugin/plugin.cfg", "res://addons/rpg_actor/plugin.cfg")

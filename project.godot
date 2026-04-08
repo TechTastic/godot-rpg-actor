@@ -1,0 +1,39 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[application]
+
+config/name="RPGActor Plugin"
+config/features=PackedStringArray("4.6", "GL Compatibility")
+config/icon="res://icon.svg"
+
+[autoload]
+
+RpgActor="*uid://wtt4fkovk3wo"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/DeeplinkPlugin/plugin.cfg", "res://addons/OAuth2Plugin/plugin.cfg", "res://addons/rpg_actor/plugin.cfg")
+
+[physics]
+
+3d/physics_engine="Jolt Physics"
+
+[rendering]
+
+rendering_device/driver.windows="d3d12"
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+
+[rpg_actor]
+
+base_api="https://rpg.actor/api"
+plc_directory="https://plc.directory"
+bluesky_api="https://public.api.bsky.app"

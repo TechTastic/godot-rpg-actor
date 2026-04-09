@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cxv250w6c06da"
-path="res://.godot/imported/icon.svg-218a8f2b3041327d8a5756f3a245f83b.ctex"
+uid="uid://3sk4whnklot0"
+path="res://.godot/imported/RpgActor.svg-7b24acfcf60fd9106f79319e69b28255.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://icon.svg"
-dest_files=["res://.godot/imported/icon.svg-218a8f2b3041327d8a5756f3a245f83b.ctex"]
+source_file="res://addons/rpg_actor/assets/RpgActor.svg"
+dest_files=["res://.godot/imported/RpgActor.svg-7b24acfcf60fd9106f79319e69b28255.ctex"]
 
 [params]
 

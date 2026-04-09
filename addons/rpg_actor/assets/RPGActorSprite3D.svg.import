@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cx10w4jcjecwc"
-path="res://.godot/imported/RPGActorSprite2D.png-8aec727183b3ea050081e7df4601da4c.ctex"
+uid="uid://bokil3j5uqcae"
+path="res://.godot/imported/RPGActorSprite3D.svg-1ea071935915dd5556864de6728ae0eb.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/rpg_actor/assets/RPGActorSprite2D.png"
-dest_files=["res://.godot/imported/RPGActorSprite2D.png-8aec727183b3ea050081e7df4601da4c.ctex"]
+source_file="res://addons/rpg_actor/assets/RPGActorSprite3D.svg"
+dest_files=["res://.godot/imported/RPGActorSprite3D.svg-1ea071935915dd5556864de6728ae0eb.ctex"]
 
 [params]
 
@@ -38,3 +38,6 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
+svg/scale=1.0
+editor/scale_with_editor_scale=false
+editor/convert_colors_with_editor_theme=false

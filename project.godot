@@ -12,11 +12,23 @@ config_version=5
 
 config/name="RPGActor Plugin"
 config/features=PackedStringArray("4.6", "GL Compatibility")
-config/icon="res://icon.svg"
+
+[atproto]
+
+plc_directory="https://plc.directory"
+oauth/client_id_url="http://localhost"
+oauth/local_callback_port=7000
 
 [autoload]
 
+XRPC="*uid://dit4kjse6ydot"
 RpgActor="*uid://wtt4fkovk3wo"
+ATProto="*uid://bqrwin2q3n7m4"
+
+[bluesky]
+
+api/public="https://public.api.bsky.app"
+api/auth="https://bsky.social"
 
 [dotnet]
 
@@ -24,7 +36,7 @@ project/assembly_name="RPGActor Plugin"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/DeeplinkPlugin/plugin.cfg", "res://addons/OAuth2Plugin/plugin.cfg", "res://addons/rpg_actor/plugin.cfg")
+enabled=PackedStringArray("res://addons/rpg_actor/plugin.cfg")
 
 [physics]
 
@@ -32,12 +44,11 @@ enabled=PackedStringArray("res://addons/DeeplinkPlugin/plugin.cfg", "res://addon
 
 [rendering]
 
+textures/canvas_textures/default_texture_filter=0
 rendering_device/driver.windows="d3d12"
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
 
 [rpg_actor]
 
-base_api="https://rpg.actor/api"
-plc_directory="https://plc.directory"
-bluesky_api="https://public.api.bsky.app"
+api="https://rpg.actor/api"

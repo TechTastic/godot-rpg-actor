@@ -9,29 +9,65 @@ var plc_directory: String:
 var blsk_api: String:
 	get: return ProjectSettings.get_setting("rpg_actor/bluesky_api", "https://public.api.bsky.app")
 
-signal logging_in(profile: Dictionary)
-signal session_expired
-signal request_failed(error: String)
 
-var did: String = ""
-var pds: String = ""
-var _handle: String = ""
-var _access_token: String = ""
-var _refresh_token: String = ""
-var _refresh_timer: Timer
-
-var logged_in: bool:
-	get: return _access_token.is_empty()
+## rpg.actor API Handlers
+func get_actors(full: bool = false) -> Dictionary:
+	var endpoint = "actors"
+	if full:
+		endpoint += "/full"
+	return await _http_request("%s/%s" % [base_api, endpoint])
 
 
-func _ready():
-	if !Engine.is_editor_hint():
-		pass
-	
-	_refresh_timer = Timer.new()
-	_refresh_timer.wait_time = 1800.0
-	#_refresh_timer.timeout.connect(_refresh_session)
-	add_child(_refresh_timer)
+func search_actors(query: String) -> Array:
+	if query == null or query.is_empty():
+		return []
+	if query.length() < 2:
+		push_error("Query must be atleast 2 characters in length!")
+	return await _http_request("%s/%s%s" % [base_api, "search?q=", query])
+
+
+func metrics() -> Dictionary:
+	return await _http_request("%s/%s" % [base_api, "stats"])
+
+
+func health() -> Dictionary:
+	return await _http_request("%s/%s" % [base_api, "health"])
+
+
+func get_masters_for_player(player_did: String) -> Dictionary:
+	return await _http_request("%s/%s%s" % [base_api, "masters?player=", player_did])
+
+
+func get_masters_by_authority(authority_did: String) -> Dictionary:
+	return await _http_request("%s/%s%s" % [base_api, "masters/by-authority?authority=", authority_did])
+
+
+func get_sprite(did: String) -> Dictionary:
+	return await _http_request("%s/%s%s" % [base_api, "sprite/normalized?did=", did])
+
+
+func get_open_graphic_card(did: String) -> Dictionary:
+	return await _http_request("%s/%s%s" % [base_api, "og/image?id=", did])
+
+
+# TODO: Implement this
+func give_equipment(pds: String, access_token: String, dpop_header: String):
+	pass
+
+
+# TODO: Implement this
+func revoke_equipment():
+	pass
+
+
+func get_creator_pricing() -> Dictionary:
+	return await _http_request("%s/%s" % [base_api, "creator/pricing"])
+
+
+func check_creator(did: String) -> bool:
+	var data = await _http_request("%s/%s%s" % [base_api, "creator/check?did=", did])
+	return data.get("isCreator", false)
+
 
 ## XRPC Handlers
 func resolve_handle(handle: String) -> Dictionary:
@@ -47,7 +83,7 @@ func resolve_handle(handle: String) -> Dictionary:
 func get_record(pds: String, repo: String, collection: String, rkey: String = "self") -> Dictionary:
 	var url = "%s/xrpc/com.atproto.repo.getRecord?repo=%s&collection=%s&rkey=%s" \
 		% [pds, repo, collection, rkey]
-	return await _get(url)
+	return await _http_request(url)
 
 
 func put_record(pds: String, collection: String, rkey: String, record: Dictionary, access_token: String, dpop_header: String) -> Dictionary:
@@ -58,33 +94,15 @@ func put_record(pds: String, collection: String, rkey: String, record: Dictionar
 		JSON.stringify({ "repo": "self", "collection": collection, "rkey": rkey, "record": record })
 	)
 
-## Login Handlers
-func login(handle: String) -> void:
-	var identity = await resolve_handle(handle)
-	if identity.is_empty():
-		request_failed.emit("Could not resolve handle: " + handle)
-		return
-	did = identity["did"]
-	pds = identity["pds"]
-	#_start_oauth_flow(_pds)
-
-
-func logout() -> void:
-	_access_token = ""
-	_refresh_token = ""
-	did = ""
-	_handle = ""
-	_refresh_timer.stop()
 
 ## Internal Helpers
-func _http_request(url: String, method: HTTPClient.Method = HTTPClient.METHOD_GET, headers: PackedStringArray = [], body: String = "") -> Dictionary:
+func _http_request(url: String, method: HTTPClient.Method = HTTPClient.METHOD_GET, headers: PackedStringArray = [], body: String = "") -> Variant:
 	var req := HTTPRequest.new()
 	add_child(req)
 	await get_tree().process_frame
 	req.request(url, headers, method, body)
 	var result = await req.request_completed
 	req.queue_free()
-	print(result)
 	var code: int = result[1]
 	if code != 200:
 		push_warning("RpgActorXRPC: %s %s returned HTTP Response Code %d" % [ClassDB.class_get_enum_constants("HTTPClient", "Method")[method], url, code])

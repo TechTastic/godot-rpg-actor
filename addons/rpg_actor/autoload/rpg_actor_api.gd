@@ -3,6 +3,7 @@
 extends Node
 ## [RpgActor] is meant to wrap the [url=https://rpg.actor/dev-guide#atproto-api]rpg.actor API[/url].
 
+
 ## The [member RpgActor.base_api] is the base API for rpg.actor calls.
 ## [br][br]
 ## This value can be changed in Project Settings under Rpg Actor -> API.
@@ -97,14 +98,23 @@ func get_open_graphic_card(did: String) -> PackedByteArray:
 # Equipment API
 
 
+## This method gets the equipment index summary — total gives, items, providers, and known provider list.
+## [br][br]
+## [code lang=text]GET /api/equipment[/code]
 func get_equipment() -> Dictionary:
 	return await XRPC._http_request("%s/%s" % [base_api, "equipment"])
 
 
+## This method gets all items owned by a player and all gives addressed to them, across all providers.
+## [br][br]
+## [code lang=text]GET /api/equipment?player=did:...[/code]
 func get_equipment_by_player(did: String) -> Dictionary:
 	return await XRPC._http_request("%s/%s%s" % [base_api, "equipment?player=", did])
 
 
+## This method gets all gives issued by a specific provider.
+## [br][br]
+## [code lang=text]GET /api/equipment?provider=did:...[/code]
 func get_equipment_by_provider(did: String) -> Dictionary:
 	return await XRPC._http_request("%s/%s%s" % [base_api, "equipment?provider=", did])
 
@@ -208,7 +218,9 @@ func contact(email: String, subject: String, message: String, handle: String = "
 		"Content-Type: application/json"
 	], data)
 
+
 # Internal
+
 
 ## This method is used internally for a quick and dirty validation check for passed in AT Protocol [param handle]s.
 func validate_handle(handle: String) -> void:

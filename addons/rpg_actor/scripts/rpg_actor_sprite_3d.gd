@@ -2,7 +2,9 @@
 @icon("res://addons/rpg_actor/assets/RPGActorSprite3D.svg")
 extends AnimatedSprite3D
 class_name RPGActorSprite3D
+## [RPGActorSprite3D] is an [AnimatedSprite3D] which automagically gets the [member RPGActorSprite3D.handle] rpg.actor and sets up its sprite sheet including animations.
 
+## Handle for the rpg.actor to render
 @export var handle: String = "godotguy.rpg.actor":
 	set(h):
 		handle = h

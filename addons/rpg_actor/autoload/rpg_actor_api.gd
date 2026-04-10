@@ -97,24 +97,16 @@ func get_open_graphic_card(did: String) -> PackedByteArray:
 # Equipment API
 
 
-# TODO: Implement this
-## [b][color=red]This method is currently unimplemented![/color][/b]
-## [br][br]
-## This method issues an item to the authenticated player. Creates an [code lang=text]equipment.rpg.give[/code] record on the provider's PDS and returns the asset + metadata for the player to accept.
-## [br][br]
-## [code lang=text]POST /api/equipment/give[/code]
-func give_equipment(pds: String, access_token: String, dpop_header: String):
-	pass
+func get_equipment() -> Dictionary:
+	return await XRPC._http_request("%s/%s" % [base_api, "equipment"])
 
 
-# TODO: Implement this
-## [b][color=red]This method is currently unimplemented![/color][/b]
-## [br][br]
-## This method revokes a previously issued item. Deletes the provider's [code lang=text]equipment.rpg.give[/code] rrecord by rkey.
-## [br][br]
-## [code lang=text]POST /api/equipment/revoke[/code]
-func revoke_equipment():
-	pass
+func get_equipment_by_player(did: String) -> Dictionary:
+	return await XRPC._http_request("%s/%s%s" % [base_api, "equipment?player=", did])
+
+
+func get_equipment_by_provider(did: String) -> Dictionary:
+	return await XRPC._http_request("%s/%s%s" % [base_api, "equipment?provider=", did])
 
 
 # Creator API
@@ -212,7 +204,7 @@ func contact(email: String, subject: String, message: String, handle: String = "
 	if !handle.is_empty():
 		validate_handle(handle)
 		data.set("handle", handle)
-	return await XRPC._http_request("%s/%s" % [base_api, "api/contact"], HTTPClient.METHOD_POST, [
+	return await XRPC._http_request("%s/%s" % [base_api, "contact"], HTTPClient.METHOD_POST, [
 		"Content-Type: application/json"
 	], data)
 

@@ -68,7 +68,7 @@ func get_record(pds: String, repo: String, collection: String, rkey: String = "s
 ## Writes a record to a PDS. Pull, merge, then put!
 ## [br][br]
 ## [codeblock lang=text]
-## GET {pds}/xrpc/com.atproto.repo.putRecords
+## POST {pds}/xrpc/com.atproto.repo.putRecords
 ##   ?repo=did:plc:...
 ##   &collection=actor.rpg.stats
 ##   &reky=...

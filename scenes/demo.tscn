@@ -1,8 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://bj5m26jd4ilq3"]
+[gd_scene format=3 uid="uid://bj5m26jd4ilq3"]
 
 [ext_resource type="Script" uid="uid://b0dxsd1pvy00h" path="res://scripts/demo.gd" id="1_tqfh0"]
 
-[node name="Demo" type="Control"]
+[node name="Demo" type="Control" unique_id=532473576]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -11,7 +11,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_tqfh0")
 
-[node name="BG" type="ColorRect" parent="."]
+[node name="BG" type="ColorRect" parent="." unique_id=1632225100]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -20,7 +20,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.1, 0.1, 0.14, 1)
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1063179392]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -32,72 +32,72 @@ theme_override_constants/margin_top = 24
 theme_override_constants/margin_right = 24
 theme_override_constants/margin_bottom = 24
 
-[node name="VBox" type="VBoxContainer" parent="MarginContainer"]
+[node name="VBox" type="VBoxContainer" parent="MarginContainer" unique_id=1232603728]
 layout_mode = 2
 theme_override_constants/separation = 16
 
-[node name="LoginPanel" type="HBoxContainer" parent="MarginContainer/VBox"]
+[node name="LoginPanel" type="HBoxContainer" parent="MarginContainer/VBox" unique_id=1515392102]
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="HandleLabel" type="Label" parent="MarginContainer/VBox/LoginPanel"]
+[node name="HandleLabel" type="Label" parent="MarginContainer/VBox/LoginPanel" unique_id=1066578200]
 layout_mode = 2
 text = "Handle:"
 
-[node name="HandleInput" type="LineEdit" parent="MarginContainer/VBox/LoginPanel"]
+[node name="HandleInput" type="LineEdit" parent="MarginContainer/VBox/LoginPanel" unique_id=1895539757]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "yourname.rpg.actor"
 
-[node name="LoginButton" type="Button" parent="MarginContainer/VBox/LoginPanel"]
+[node name="LoginButton" type="Button" parent="MarginContainer/VBox/LoginPanel" unique_id=1609960448]
 unique_name_in_owner = true
-layout_mode = 2
 custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
 theme_override_colors/font_pressed_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
 text = "  Login  "
 
-[node name="StatusLabel" type="Label" parent="MarginContainer/VBox"]
+[node name="StatusLabel" type="Label" parent="MarginContainer/VBox" unique_id=923908289]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Not logged in"
 
-[node name="HSplit" type="HSplitContainer" parent="MarginContainer/VBox"]
+[node name="HSplit" type="HSplitContainer" parent="MarginContainer/VBox" unique_id=1018396534]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="LeftPanel" type="VBoxContainer" parent="MarginContainer/VBox/HSplit"]
+[node name="LeftPanel" type="VBoxContainer" parent="MarginContainer/VBox/HSplit" unique_id=4996477]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.4
 theme_override_constants/separation = 12
 
-[node name="SpriteLabel" type="Label" parent="MarginContainer/VBox/HSplit/LeftPanel"]
+[node name="SpriteLabel" type="Label" parent="MarginContainer/VBox/HSplit/LeftPanel" unique_id=1337954520]
 layout_mode = 2
 text = "Character Sprite"
 horizontal_alignment = 1
 
-[node name="SpriteRect" type="TextureRect" parent="MarginContainer/VBox/HSplit/LeftPanel"]
+[node name="SpriteRect" type="TextureRect" parent="MarginContainer/VBox/HSplit/LeftPanel" unique_id=645129834]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
-stretch_mode = 5
 expand_mode = 1
+stretch_mode = 5
 
-[node name="RightPanel" type="VBoxContainer" parent="MarginContainer/VBox/HSplit"]
+[node name="RightPanel" type="VBoxContainer" parent="MarginContainer/VBox/HSplit" unique_id=129803753]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.6
 theme_override_constants/separation = 8
 
-[node name="StatsLabel" type="Label" parent="MarginContainer/VBox/HSplit/RightPanel"]
+[node name="StatsLabel" type="Label" parent="MarginContainer/VBox/HSplit/RightPanel" unique_id=1327597676]
 layout_mode = 2
 text = "Character Stats"
 horizontal_alignment = 1
 
-[node name="StatsDisplay" type="RichTextLabel" parent="MarginContainer/VBox/HSplit/RightPanel"]
+[node name="StatsDisplay" type="RichTextLabel" parent="MarginContainer/VBox/HSplit/RightPanel" unique_id=133341095]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
@@ -105,35 +105,34 @@ bbcode_enabled = true
 text = "Login to view stats..."
 scroll_following = true
 
-[node name="ButtonRow" type="HBoxContainer" parent="MarginContainer/VBox"]
+[node name="ButtonRow" type="HBoxContainer" parent="MarginContainer/VBox" unique_id=1855936388]
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="WriteStatsButton" type="Button" parent="MarginContainer/VBox/ButtonRow"]
+[node name="WriteStatsButton" type="Button" parent="MarginContainer/VBox/ButtonRow" unique_id=18234667]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 disabled = true
 text = "Write Custom Stats"
 
-[node name="WriteItemButton" type="Button" parent="MarginContainer/VBox/ButtonRow"]
+[node name="WriteItemButton" type="Button" parent="MarginContainer/VBox/ButtonRow" unique_id=1676988152]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 disabled = true
 text = "Give Self an Item"
 
-[node name="RefreshButton" type="Button" parent="MarginContainer/VBox/ButtonRow"]
+[node name="RefreshButton" type="Button" parent="MarginContainer/VBox/ButtonRow" unique_id=2142115326]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 disabled = true
 text = "Refresh from PDS"
 
-[node name="LogOutput" type="RichTextLabel" parent="MarginContainer/VBox"]
+[node name="LogOutput" type="RichTextLabel" parent="MarginContainer/VBox" unique_id=476935172]
 unique_name_in_owner = true
-layout_mode = 2
 custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
 bbcode_enabled = true
-text = ""
 scroll_following = true

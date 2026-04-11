@@ -1,62 +1,55 @@
 @tool
 @icon("res://addons/rpg_actor/assets/ATProto.svg")
 extends Node
-## [ATProto] is a class meant to wrap necessary AT Protocol XRPC API calls from [RpgActor].
-## [br][br]
-## If you want to learn more about the AT Protocol specifications, [url=https://atproto.com/docs]here[/url] is their documentation.
-## [br][br]
-## [b]Why I decided not to implement AT Protocol's OAuth flow:[/b]
-## [br]
-## This project ballooned out of necessity for the [url=https://itch.io/jam/rpgactor]rpg.actor game jam[/url] and I am over halfway through the jam time writing documentation.
-## [br]
-## Also, the OAuth flow is very complicated and very heavy on specification.
-## [br][br]
-## If you want or need to implement OAuth yourself, [url=https://atproto.com/guides/oauth-patterns]here[/url] is their documentation and [url=https://atproto.com/specs/oauth]here[/url] is their specification.
-## [br]
-## If you implement their OAuth flow, feel free to make a Pull Request on [url=https://github.com/TechTastic/godot-rpg-actor]Github[/url]
+## AT Protocol identity resolution and record operations.
+## Supports [code]did:plc[/code] and [code]did:web[/code].
 
 
-## The PLC Directory is a decentralized identity directory, primarily used by the AT Protocol, that maps decentralized identifiers (did:plc) to user profile data.
-## [br][br]
-## This value can be changed in Project Settings under ATProto -> PLC Directory.
 var plc_directory: String:
 	get: return ProjectSettings.get_setting("atproto/plc_directory", "https://plc.directory")
-## This is the public API for Bluesky used to resolve handles into DIDs.
-## [br][br]
-## This value can be changed in Project Settings under Bluesky -> API -> Public.
+
 var public_blsk_api: String:
 	get: return ProjectSettings.get_setting("bluesky/api/public", "https://public.api.bsky.app")
-## This is the other public API for Bluesky which needs authentication. Thisi s currently unused in the project.
-## [br][br]
-## This value can be changed in Project Settings under Bluesky -> API -> Auth.
+
 var auth_blsk_api: String:
 	get: return ProjectSettings.get_setting("bluesky/api/auth", "https://bsky.social")
 
-## This method is used to get both the DID (via Bluesky's public API) and PDS (via the PLC Directory) related to a given AT Protocol handle
+
+## Resolves a handle to its DID and PDS endpoint.
 func resolve_handle(handle: String) -> Dictionary:
 	var clean = handle.lstrip("@")
-	RpgActor.validate_handle(clean)
+	if not RpgActor.validate_handle(clean):
+		return {}
 	var res = await XRPC.xrpc_get(public_blsk_api, "com.atproto.identity.resolveHandle", { "handle": clean })
-	if res.is_empty(): return {}
+	if res == null or (res is Dictionary and res.is_empty()):
+		return {}
 	var did: String = res.get("did", "")
-	var doc = await XRPC._http_request(plc_directory + "/" + did)
-	var pds = _extract_pds(doc)
+	if did.is_empty():
+		return {}
+	var pds = await resolve_pds_from_did(did)
 	return { "did": did, "pds": pds }
 
 
-## This method is used for retrieving AT protocol records from the provided [param pds], in the provided [param repo], in the provided [param collection] and under the [param rkey].
+## Resolves the PDS endpoint for a DID.
+func resolve_pds_from_did(did: String) -> String:
+	if not RpgActor.validate_did(did):
+		return ""
+	var doc: Dictionary
+	if did.begins_with("did:plc:"):
+		doc = await XRPC._http_request(plc_directory + "/" + did.uri_encode())
+	elif did.begins_with("did:web:"):
+		var domain = did.replace("did:web:", "").replace("%3A", ":").replace("%2F", "/")
+		doc = await XRPC._http_request("https://%s/.well-known/did.json" % [domain])
+	else:
+		push_error("ATProto: Unsupported DID method: %s" % [did])
+		return ""
+	if doc == null or doc.is_empty():
+		return ""
+	return _extract_pds(doc)
+
+
+## Gets a record from a PDS.
 ## [br][br]
-## While most records are public, in the event authentication is needed, [param access_token] and [param dpop_header] are exposed for use via AT Protocol's OAuth flow.
-## [br][br]
-## Without Authentication:
-## [codeblock lang=text]
-## GET {pds}/xrpc/com.atproto.repo.getRecord
-##   ?repo=did:plc:...
-##   &collection=actor.rpg.stats
-##   &rkey=self
-## [/codeblock]
-## [br]
-## With Authentication:
 ## [codeblock lang=text]
 ## GET {pds}/xrpc/com.atproto.repo.getRecord
 ##   ?repo=did:plc:...
@@ -67,41 +60,61 @@ func resolve_handle(handle: String) -> Dictionary:
 ##   DPoP: dpop_token
 ## [/codeblock]
 func get_record(pds: String, repo: String, collection: String, rkey: String = "self", access_token: String = "", dpop_token: String = "") -> Dictionary:
-	RpgActor.validate_did(repo)
+	if not RpgActor.validate_did(repo):
+		return {}
 	return await XRPC.xrpc_get(pds, "com.atproto.repo.getRecord", { "repo": repo, "collection": collection, "rkey": rkey }, access_token, dpop_token)
 
-## This method is used for putting AT protocol records onto the provided [param pds], in the provided [param repo], in the [param collection] and under the [param rkey].
+
+## Writes a record to a PDS. Pull, merge, then put!
 ## [br][br]
-## The [param access_token] and [param dpop_header] are exposed for use via AT Protocol's OAuth flow.
-## [br][br]
-## [b][color=red]WARNING[/color]: Doing this overwrites any existing record in the same place. The expected use is to pull, merged, then put![/b]
 ## [codeblock lang=text]
-## POST {pds}/xrpc/com.atproto.repo.putRecord
-##   ?repo=self
+## GET {pds}/xrpc/com.atproto.repo.putRecords
+##   ?repo=did:plc:...
 ##   &collection=actor.rpg.stats
-##   &rkey=self
+##   &reky=...
 ##
-##   Content-Type: application/json
 ##   Authorization: DPoP access_token
 ##   DPoP: dpop_token
 ##
-##   { record }
+##   record
 ## [/codeblock]
-func put_record(pds: String, access_token: String, dpop_header: String, collection: String, rkey: String, record: Dictionary) -> Dictionary:
-	return await XRPC.xrpc_post(pds, access_token, dpop_header, "com.atproto.repo.putRecord", { "repo": "self", "collection": collection, "rkey": rkey, "record": record })
+func put_record(pds: String, repo: String, collection: String, rkey: String, record: Dictionary, access_token: String = "", dpop_token: String = "") -> Dictionary:
+	if not RpgActor.validate_did(repo):
+		return {}
+	return await XRPC.xrpc_post(pds, access_token, dpop_token, "com.atproto.repo.putRecord", { "repo": repo, "collection": collection, "rkey": rkey, "record": record })
 
 
-## This method is used for retrieving a list of AT protocol records from the provided [param pds], in the provided [param repo] and in the provided [param collection].
+## Fetches the existing stats record, merges a single system key, and puts it back.
+## Only touches the key you specify — other systems' data is preserved.
+## Optionally calls refresh_actor to update the rpg.actor cache.
+func merge_and_put_stats(pds: String, repo: String, system_key: String, data: Dictionary, refresh: bool = true) -> Dictionary:
+	if not RpgActor.validate_did(repo):
+		return {}
+
+	# Fetch existing record
+	var existing = await get_record(pds, repo, "actor.rpg.stats")
+	var record: Dictionary = {}
+	if existing is Dictionary and existing.has("value"):
+		record = existing["value"].duplicate(true)
+	else:
+		record["createdAt"] = Time.get_datetime_string_from_system(true) + "Z"
+
+	# Merge only the specified key
+	record["$type"] = "actor.rpg.stats"
+	record[system_key] = data
+	record["updatedAt"] = Time.get_datetime_string_from_system(true) + "Z"
+
+	var result = await put_record(pds, repo, "actor.rpg.stats", "self", record)
+
+	# Refresh rpg.actor cache so the site shows updated data
+	if refresh and result is Dictionary and not result.is_empty():
+		await RpgActor.refresh_actor(repo)
+
+	return result
+
+
+## Lists records in a collection.
 ## [br][br]
-## While most records are public, in the event authentication is needed, [param access_token] and [param dpop_header] are exposed for use via AT Protocol's OAuth flow.
-## [br][br]
-## Without Authentication:
-## [codeblock lang=text]
-## GET {pds}/xrpc/com.atproto.repo.listRecords
-##   ?repo=did:plc:...
-##   &collection=actor.rpg.stats
-## [/codeblock]
-## With Authentication:
 ## [codeblock lang=text]
 ## GET {pds}/xrpc/com.atproto.repo.listRecords
 ##   ?repo=did:plc:...
@@ -111,13 +124,14 @@ func put_record(pds: String, access_token: String, dpop_header: String, collecti
 ##   DPoP: dpop_token
 ## [/codeblock]
 func list_records(pds: String, repo: String, collection: String, access_token: String = "", dpop_header: String = "") -> Dictionary:
-	RpgActor.validate_did(repo)
+	if not RpgActor.validate_did(repo):
+		return {}
 	return await XRPC.xrpc_get(pds, "com.atproto.repo.listRecords", { "repo": repo, "collection": collection }, access_token, dpop_header)
 
 
-## An internal method used by [method ATProto.resolve_handle] to extract the PDS endpoint from the given PLC Directory entry.
+## Extracts the PDS endpoint from a DID document.
 func _extract_pds(plc_doc: Dictionary) -> String:
 	for service in plc_doc.get("service", []):
-		if service.get("type") == "AtprotoPersonalDataServer":
+		if service.get("id") == "#atproto_pds" or service.get("type") == "AtprotoPersonalDataServer":
 			return service.get("serviceEndpoint", "")
 	return ""

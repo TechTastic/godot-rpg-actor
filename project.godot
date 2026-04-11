@@ -11,6 +11,7 @@ config_version=5
 [application]
 
 config/name="RPGActor Plugin"
+run/main_scene="uid://bj5m26jd4ilq3"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 
 [atproto]
@@ -18,12 +19,14 @@ config/features=PackedStringArray("4.6", "GL Compatibility")
 plc_directory="https://plc.directory"
 oauth/client_id_url="http://localhost"
 oauth/local_callback_port=7000
+oauth/scope="atproto repo:actor.rpg.stats repo:actor.rpg.sprite repo:actor.rpg.master repo:equipment.rpg.item repo:equipment.rpg.give blob:image/*"
 
 [autoload]
 
 XRPC="*uid://dit4kjse6ydot"
 RpgActor="*uid://wtt4fkovk3wo"
 ATProto="*uid://bqrwin2q3n7m4"
+ATProtoOAuth="*res://addons/rpg_actor/autoload/atproto_oauth.gd"
 
 [bluesky]
 

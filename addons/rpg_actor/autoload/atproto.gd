@@ -49,6 +49,16 @@ func resolve_pds_from_did(did: String) -> String:
 
 
 ## Gets a record from a PDS.
+## [br][br]
+## [codeblock lang=text]
+## GET {pds}/xrpc/com.atproto.repo.getRecord
+##   ?repo=did:plc:...
+##   &collection=actor.rpg.stats
+##   &rkey=self
+##
+##   Authorization: DPoP access_token
+##   DPoP: dpop_token
+## [/codeblock]
 func get_record(pds: String, repo: String, collection: String, rkey: String = "self", access_token: String = "", dpop_token: String = "") -> Dictionary:
 	if not RpgActor.validate_did(repo):
 		return {}
@@ -56,6 +66,18 @@ func get_record(pds: String, repo: String, collection: String, rkey: String = "s
 
 
 ## Writes a record to a PDS. Pull, merge, then put!
+## [br][br]
+## [codeblock lang=text]
+## GET {pds}/xrpc/com.atproto.repo.putRecords
+##   ?repo=did:plc:...
+##   &collection=actor.rpg.stats
+##   &reky=...
+##
+##   Authorization: DPoP access_token
+##   DPoP: dpop_token
+##
+##   record
+## [/codeblock]
 func put_record(pds: String, repo: String, collection: String, rkey: String, record: Dictionary, access_token: String = "", dpop_token: String = "") -> Dictionary:
 	if not RpgActor.validate_did(repo):
 		return {}
@@ -92,6 +114,15 @@ func merge_and_put_stats(pds: String, repo: String, system_key: String, data: Di
 
 
 ## Lists records in a collection.
+## [br][br]
+## [codeblock lang=text]
+## GET {pds}/xrpc/com.atproto.repo.listRecords
+##   ?repo=did:plc:...
+##   &collection=actor.rpg.stats
+##
+##   Authorization: DPoP access_token
+##   DPoP: dpop_token
+## [/codeblock]
 func list_records(pds: String, repo: String, collection: String, access_token: String = "", dpop_header: String = "") -> Dictionary:
 	if not RpgActor.validate_did(repo):
 		return {}

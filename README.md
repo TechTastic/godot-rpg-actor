@@ -163,6 +163,6 @@ These are set automatically by the plugin but can be changed in Project Settings
 
 ### Links
 
-Built for the [rpg.actor Game Jam](https://rpg.actor/jam) by [@techtastic.bsky.social](https://bsky.app/profile/techtastic.bsky.social) (also known as [@godotguy.rpg.actor](https://bsky.app/profile/godotguy.rpg.actor)).
+Built for the [rpg.actor Game Jam](https://rpg.actor/jam) by [@techtastic1.bsky.social](https://bsky.app/profile/techtastic1.bsky.social) (also known as [@godotguy.rpg.actor](https://bsky.app/profile/godotguy.rpg.actor)).
 
 Follow [@rpg.actor](https://bsky.app/profile/rpg.actor) on Bluesky, check out the [Developer Guide](https://rpg.actor/dev-guide) for more, and make a character at [rpg.actor](https://rpg.actor) to try it yourself!
